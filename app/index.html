@@ -21,15 +21,12 @@
 
     </head>
     <body>
-        <!--[if lt IE 10]>
-            <p class="browsehappy">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</p>
-        <![endif]-->
         <section id="wrap">
-            <form id="myform" novalidate="novalidate">
+            <form id="myform" novalidate="novalidate" data-handle-empty="true">
                 <fieldset>
                     <div class="row">
                         <label>E-mail</label>
-                        <input type="email" id="email" class="pristine"  required />
+                        <input type="email" id="email" class="pristine"  data-pattern="email" required />
                         <small
                             class="message is-hidden"
                             data-empty="Please enter your email address."
@@ -38,12 +35,12 @@
                     </div>
                     <div class="row">
                          <label>Confirm E-mail</label>
-                        <input type="email" id="conf-email" class="pristine"  data-equalto="email" required />
+                        <input type="email" id="conf-email" class="pristine"  data-equal-to="email" required />
                         <small
                             class="message is-hidden"
-                            data-empty="Please enter your email address."
+                            data-empty="Please confirm your email address."
                             data-invalid="Please enter a valid email address."
-                            data-notEqual="Emails do not match"
+                            data-not-equal="Emails do not match"
                         ></small>
                     </div>
                 </fieldset>
@@ -55,7 +52,7 @@
                             name="password"
                             id="password"
                             class="pristine"
-                            data-min="6"
+                            data-pattern="password"
                             required
                         />
                         <small
@@ -70,19 +67,18 @@
                             type="password"
                             id="conf-password"
                             class="pristine"
-                            data-min="6"
-                            data-equalto="password"
+                            data-equal-to="password"
                             required
                         />
                         <small
                             class="message is-hidden"
                             data-empty="Please re-enter your password."
-                            data-notEqual="Emails do not match"
+                            data-not-equal="Passwords do not match"
                         ></small>
                     </div>
                 </fieldset>
                 <input type="submit" value="submit"/>
-                <input type="reset" value="reset" />
+                <input type="reset" value="reset"/>
             </form>
         </section>
         <button>rebind events</button>
