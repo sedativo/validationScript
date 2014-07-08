@@ -1,7 +1,14 @@
-$icon-font-path: "/bower_components/sass-bootstrap/fonts/";
+$invalid: #fae1e1;
+$invalidBorder: #e76a6a;
+$invalidBorderHov: darken($invalidBorder, 20%);
+$invalidText: #e65252;
+$valid: #d6fad5;
+$validBorder: darken($valid, 20%);
+$validBorderHov: darken($validBorder, 20%);
 
-@import 'sass-bootstrap/lib/bootstrap';
-
+html {
+    font-size: 16px !important;
+}
 .browsehappy {
     margin: 0.2em 0;
     background: #ccc;
@@ -93,34 +100,65 @@ body {
         background: rgb(245, 245, 245);
     }
     #myform {
-        width: 23em;
+        max-width: 39em;
         padding: 5em;
         margin: 0 auto;
         background: #fff;
         box-shadow: 0 5px 5px rgb(204, 204, 204);
     }
     label {
-        display: block;
+        float: left;
     }
-    small.message {
+    small.error {
         display: none;
         color: #fff;
-        background: red;
-        padding: 0.25em;
-
+        background: $invalidBorder;
+        padding: 0.3em 1em;
+        font-style: italic;
+        margin-top: -1rem;
+        clear: both;
     }
     fieldset {
         margin-bottom: 2em;
     }
-    input[data-invalid] {
-        border-color: red;
-        ~ small.message {
+    input[type="number"]{
+       &::-webkit-inner-spin-button, ::-webkit-outer-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+       }
+        -webkit-appearance: textfield !important;
+        -moz-appearance: textfield !important;
+        appearance: textfield !important;
+    }
+    input[data-invalid],
+    select[data-invalid] {
+        border-color: $invalidBorder;
+        &:hover {
+           border-color: $invalidBorderHov;
+        }
+        ~ small.error {
         display: block;
     }
 }
-    input[data-valid] {
-        border-color: green;
+    input[data-valid],
+    select[data-valid] {
+        border-color: $validBorder;
+        background: lighten($validBorder, 20%);
+        &:hover {
+            border-color: $validBorderHov;
+        }
          &:focus {
-            border-color: blue;
+            border-color: $validBorder;
+            box-shadow: 0 0 5px lighten($validBorder, 20%);
         }
     }
+select {
+    &[data-type="date-select"] {
+        margin-bottom: 0;
+    }
+    + .block {
+        padding-top: 0.5rem;
+        text-align: center;
+        font-size: 1.4em;
+    }
+}

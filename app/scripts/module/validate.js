@@ -1,32 +1,35 @@
 (function(window, document, undefined){
     'use strict';
 
-    var myValidate = (function(){
+    var Validate = (function(){
 
         return {
-            settings: {
-                timeout: 1000,
-                patterns: {
-                    name: /^[a-z ,.'-]+$/i,
-                    email: /^([\w-\.]+@([\w-]+\.)+[\w-]{2,4})?$/,
-                    cvv: /^[0-9]{3,4}$/,
-                    password: /^.{6,}$/,
-                    postalcode: /^[A-Z0-9\-]{3,10}$/i,
-                    cc: {
-                        visa: /^4[0-9]{12,15}$/,
-                        mastercard: /^5[0-9]{15}$/,
+            settings : {
+                live_validate: true,
+                timeout : 1000,
+                patterns : {
+                    name : /^[a-z ,.'-]+$/i,
+                    email : /^([\w-\.]+@([\w-]+\.)+[\w-]{2,4})?$/,
+                    cvv : /^[0-9]{3,4}$/,
+                    password : /^.{6,}$/,
+                    postalcode : /^[A-Z0-9\-]{3,10}$/i,
+                    //date formatt MM/YYYY
+                    date : /^(0[1-9]|1[012])[- \/.]\d{4}$/,
+                    cc : {
+                        visa : /^4[0-9]{12,15}$/,
+                        mastercard : /^5[0-9]{15}$/,
                     }
                 }
             },
             activeForm : null,
             isAjax : null,
             timer : null,
-            init: function(form, isAjax){
+            init : function(form, isAjax, settings){
                 this.activeForm = form;
                 this.isAjax = isAjax || null;
                 return this.bindEvents();
             },
-            bindEvents: function(){
+            bindEvents : function(){
 
                 var self = this;
 
@@ -35,6 +38,7 @@
                     e.preventDefault();
                     self.validate(self.activeForm.find('input[required], select[required]'), true);
                 });
+
                 this.activeForm.find('input[required], select[required]')
                 .off()
                 .on('blur change', function(){
@@ -42,10 +46,12 @@
                     self.validate($(this), false);
                 })
                 .on('keyup', function(){
-                    clearTimeout(self.timer);
-                    self.timer = setTimeout(function(){
-                        self.validate($(this), false);
-                    }.bind(this), self.settings.timeout);
+                    if(self.settings.live_validate){
+                        clearTimeout(self.timer);
+                        self.timer = setTimeout(function(){
+                            self.validate($(this), false);
+                        }.bind(this), self.settings.timeout);
+                    }
                 });
 
                 // this.activeForm.find('input[type="reset"]')
@@ -74,7 +80,7 @@
 
                 return this.createEvent();
             },
-            createEvent: function(){
+            createEvent : function(){
                 var valReset = new CustomEvent(
                     'validateReset',
                     {
@@ -99,7 +105,7 @@
 
 
             },
-            removeEvents: function(){
+            removeEvents : function(){
 
                 var self = this;
 
@@ -112,7 +118,7 @@
                     );
 
             },
-            reset: function(){
+            reset : function(){
 
                 var fields = this.activeForm.find('input[required], select[required]'),
                     reset = this.activeForm.find('input[type="reset"]');
@@ -136,7 +142,7 @@
                 return this.toggleDisabled();
 
             },
-            validate: function(elements, submit){
+            validate : function(elements, submit){
                 console.log('validate');
                 var el = elements,
                     self = this;
@@ -144,7 +150,7 @@
                 el.each(function(){
                     console.log($(this));
                     if( !$(this).val().length || $(this).val() === '0' ){
-                        self.handleEmptyField.call(self, $(this));
+                        self.handleEmptyField($(this));
                     }
                     if( $(this).hasClass('pristine') && $(this).val().length ){
                         $(this).removeClass('pristine').addClass('dirty');
@@ -152,8 +158,26 @@
                     if( $(this).data('pattern') && $(this).val().length ){
                         self.parsePattern($(this));
                     }
-                    if( $(this).data('type') === 'month' || $(this).data('type') === 'year' ){
-                        self.handleDate($('select[data-type="month"]'), $('select[data-type="year"]'));
+                    if( $(this).data('type') === 'date-select' ){
+
+                        var month = $('select[data-date="month"]').val(),
+                            year = $('select[data-date="year"]').val();
+
+                        if(month === '0' || year === '0'){
+                            self.handleEmptyField($('select[data-date="year"]'));
+                        } else {
+                            self.handleDate(
+                                $('select[data-date="month"]').val(),
+                                $('select[data-date="year"]').val(),
+                                $('select[data-date="year"]'),
+                                $('select[data-date="month"]')
+                            );
+                        }
+
+                    }
+                    if( $(this).data('type') === 'date-input' && $(this).val().length){
+                        console.log('date value: '+ $(this).val());
+                        self.formatDate($(this), $(this).val());
                     }
                     if( $(this).data('equal-to') && $(this).val().length ){
                         self.handleEqualTo($(this));
@@ -166,8 +190,8 @@
 
                 return this.canSubmitCheck(submit);
             },
-            handleEmptyField: function(element){
-                console.log('handleEmpty field');
+            handleEmptyField : function(element){
+
                 if( this.activeForm.data('handle-empty') ){
                     this.setMessage(element, 'empty', false);
                 }
@@ -179,8 +203,8 @@
                 return this.toggleDisabled(false);
 
             },
-            parsePattern: function(element){
-                console.log('parsePattern');
+            parsePattern : function(element){
+
                 var el = element,
                     pattern = el.data('pattern'),
                     patterns = this.settings.patterns,
@@ -191,7 +215,7 @@
                 }
 
                 if( patterns.hasOwnProperty(pattern) && pattern.length ){
-                    console.log('patterns[pattern]: '+patterns[pattern]);
+
                     testVal = patterns[pattern];
                 } else if ( pattern.length ) {
                     testVal = new RegExp('^'+pattern+'$');
@@ -200,8 +224,8 @@
                 return this.handlePattern(el, testVal);
 
             },
-            handlePattern: function(element, testValue){
-                console.log('handle Pattern');
+            handlePattern : function(element, testValue){
+
                 var el = element,
                     pattern = testValue,
                     valid = pattern.test(el.val()),
@@ -210,8 +234,8 @@
                 return this.setMessage(el, type, valid);
 
             },
-            canSubmitCheck: function(submit){
-                console.log('cansubmit check');
+            canSubmitCheck : function(submit){
+
                 var feilds = this.activeForm.find('input[required], select[required]'),
                     canSubmit = true;
 
@@ -229,12 +253,12 @@
                     this.toggleDisabled(false);
                     return this.activeForm.submit();
                 }
-                console.log('canSubmit: '+canSubmit);
+
                 return this.toggleDisabled(canSubmit);
 
             },
-            setMessage: function(element, type, valid){
-                console.log('set message');
+            setMessage : function(element, type, valid){
+
                 var messageEL = element.siblings('small'),
                     text = messageEL.data(type) ? messageEL.data(type) : '';
 
@@ -242,14 +266,14 @@
 
                return this.setvalidity(element, valid);
             },
-            setvalidity: function(element, valid){
-                console.log('setvalidity');
+            setvalidity : function(element, valid){
+
                 return valid ? element.removeAttr('data-invalid').attr('data-valid', '') :
                     element.removeAttr('data-valid').attr('data-invalid', '');
 
             },
-            toggleDisabled: function(canSubmit){
-                console.log('toggleDisabled canSubmit: '+canSubmit);
+            toggleDisabled : function(canSubmit){
+
                 var submitButton = this.activeForm.find('input[type="submit"]');
 
                 return  canSubmit ?
@@ -257,7 +281,7 @@
                         submitButton.addClass('is-disabled').attr('disabled', 'disabled');
 
             },
-            handleEqualTo: function(element){
+            handleEqualTo : function(element){
 
                 var value = element.data('equal-to'),
                     checkVal = $('#'+value),
@@ -267,7 +291,7 @@
                 return this.setMessage(element, type, valid);
 
             },
-            handleCheckBox: function(element){
+            handleCheckBox : function(element){
 
                 var valid = element.is(':checked') ? true : false,
                     type = valid ? '' : 'invalid';
@@ -275,8 +299,8 @@
                 return this.setMessage(element, type, valid);
 
             },
-            handleCreditCard: function(element){
-
+            handleCreditCard : function(element){
+                console.log('handle cc');
                 var el = element,
                     patterns = this.settings.patterns;
 
@@ -286,18 +310,21 @@
                 if ( patterns.cc.mastercard.test(el.val()) && !this.luhnCheck(el.val()) ){
                     return this.setMessage(element, 'invalid-mc', false);
                 }
-
+                if ( ( !patterns.cc.mastercard.test(el.val()) || !patterns.cc.visa.test(el.val()) )
+                        && !this.luhnCheck(el.val()) ){
+                    return this.setMessage(element, 'invalid', false);
+                }
                 return this.setMessage(element, '', true);
 
             },
-            luhnCheck: function(value){
+            luhnCheck : function(value){
 
                 var number = value.replace(/\D/g, ''),
                     number_length = number.length,
                     parity = number_length % 2,
                     total = 0;
 
-                for ( i = 0; i < number_length; i++ ) {
+                for ( var i = 0; i < number_length; i++ ) {
                     var digit = number.charAt(i);
                     if ( i % 2 == parity ) {
                         digit = digit * 2;
@@ -308,28 +335,30 @@
                     total = total + parseInt(digit);
                 }
 
-                if ( total % 10 == 0 ){
-                    return true;
-                } else {
-                    return false;
-                }
+                return total % 10 == 0 ? true : false;
+            },
+            formatDate : function(element, value){
+
+                var date = this.settings.patterns.date.test(value) ? value.split('/') : false,
+                    month = date ? date[0] : null,
+                    year = date ? date[1] : null;
+                    console.log('month : '+month+'\nyear: '+ year);
+
+                return date ? this.handleDate(month, year, element) : this.setMessage(element, 'invalid-format', false);
 
             },
-            handleDate: function(month, year){
+            handleDate : function(month, year, Eelement, Melement){
 
                 var dayArray = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31],
-                    mval = month.val(),
-                    mvalTrim = mval.substring(1),
-                    yval = year.val(),
+                    mval = month,
+                    mvalTrim = mval.indexOf('0') === 0 ? mval.substring(1) : mval,
+                    yval = year,
                     today = new Date(),
                     expDate = new Date(),
                     day,
                     valid = false,
                     type;
 
-                if( month.val() === '0' && year.val() === '0' ){
-                    return this.setMessage(year, 'empty', valid);
-                }
                 //decrement month value by 1 to match 0 indexed array
                 mvalTrim--;
 
@@ -340,15 +369,18 @@
 
                 //date object value with expiration date
                 expDate.setFullYear(yval, mvalTrim, day, 23, 59, 59);
-
+                console.log('today: '+today+'\nexpiration date: '+expDate);
                 valid = (today > expDate) ? false : true;
                 type = valid ? '' : 'invalid';
 
-                return this.setMessage(year, type, valid)
+                if(Melement){
+                    this.setvalidity(Melement, valid);
+                }
+                return this.setMessage(Eelement, type, valid);
             }
         };
     })();
 
-    window.myValidate = myValidate;
+    window.Validate = Validate;
 
 })(this, this.document);

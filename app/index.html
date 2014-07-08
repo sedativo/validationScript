@@ -15,6 +15,7 @@
         <!-- endbower -->
         <!-- endbuild -->
         <!-- build:css(.tmp) styles/main.css -->
+         <link rel="stylesheet" href="bower_components/foundation/css/foundation.css">
         <link rel="stylesheet" href="styles/main.css">
         <!-- endbuild -->
         <script src="bower_components/modernizr/modernizr.js"></script>
@@ -22,13 +23,14 @@
     </head>
     <body>
         <section id="wrap">
+            <button class="toggleEmpty"> handle empty toggle </button>
             <form id="myform" novalidate="novalidate" data-handle-empty="true">
                 <fieldset>
                     <div class="row">
                         <label>E-mail</label>
                         <input type="email" id="email" class="pristine"  data-pattern="email" required />
                         <small
-                            class="message is-hidden"
+                            class="error"
                             data-empty="Please enter your email address."
                             data-invalid="Please enter a valid email address."
                         ></small>
@@ -37,7 +39,7 @@
                          <label>Confirm E-mail</label>
                         <input type="email" id="conf-email" class="pristine"  data-equal-to="email" required />
                         <small
-                            class="message is-hidden"
+                            class="error"
                             data-empty="Please confirm your email address."
                             data-invalid="Please enter a valid email address."
                             data-not-equal="Emails do not match"
@@ -56,7 +58,7 @@
                             required
                         />
                         <small
-                            class="message is-hidden"
+                            class="error"
                             data-empty="Please a password."
                             data-invalid="Password must be at least 6 didgits"
                         ></small>
@@ -71,21 +73,95 @@
                             required
                         />
                         <small
-                            class="message is-hidden"
+                            class="error"
                             data-empty="Please re-enter your password."
                             data-not-equal="Passwords do not match"
                         ></small>
                     </div>
                 </fieldset>
-                <input type="submit" value="submit"/>
-                <input type="reset" value="reset"/>
+                <fieldset>
+                    <div class="row">
+                        <label>Date</label>
+                        <input type="text" id="date" class="pristine"  data-type="date-input" placeholder="MM/YYYY" required />
+                        <small
+                            class="error"
+                            data-empty="Please enter an expiration date."
+                            data-invalid-format="Please enter a valid expiration date: MM/YYYY."
+                            data-invalid="Expiration date has allready passed"
+                        ></small>
+                    </div>
+                     <div class="row">
+                            <select
+                                id="month"
+                                class="pristine small-5 large-5 columns"
+                                data-date="month"
+                                data-type="date-select"
+                                required >
+                                <option value="0" selected="selected">Month</option>
+                                <option value="01">01</option><option value="02">02</option>
+                                <option value="03">03</option><option value="04">04</option>
+                                <option value="05">05</option><option value="06">06</option>
+                                <option value="07">07</option><option value="08">08</option>
+                                <option value="09">09</option><option value="10">10</option>
+                                <option value="11">11</option><option value="12">12</option>
+                            </select>
+                            <div class="block small-2 large-2 columns">/</div>
+                            <select
+                                id="year"
+                                name="year"
+                                class="pristine small-5 large-5  columns "
+                                data-date="year"
+                                data-type="date-select"
+                                required >
+                                <option value="0" selected="selected">Year</option>
+                                <option value="2013">2013</option>
+                                <option value="2014">2014</option>
+                                <option value="2015">2015</option>
+                                <option value="2016">2016</option>
+                                <option value="2017">2017</option>
+                                <option value="2018">2018</option>
+                                <option value="2019">2019</option>
+                                <option value="2020">2020</option>
+                                <option value="2021">2021</option>
+                            </select>
+                            <small
+                                class="error"
+                                data-empty="Please enter an expiration date."
+                                data-invalid="Expiration date has allready passed"
+                            ></small>
+                    </div>
+                </fieldset>
+                <fieldset>
+                    <div class="row">
+                        <label>Credit Card</label>
+                        <input type="number" id="cc" class="pristine" data-pattern="cc" required />
+                        <small
+                            class="error"
+                            data-empty="Please enter a credit card number."
+                            data-invalid="Only Visa and Mastercard are accepted"
+                            data-invalid-visa="Please enter a valid Visa number."
+                            date-invalid-mc="Please enter a valid Mastercard number."
+                        ></small>
+                    </div>
+                    <div class="row">
+                        <label>CVV</label>
+                        <input type="number" id="cvv" class="pristine" data-pattern="cvv" required />
+                        <small
+                            class="error"
+                            data-empty="Please enter a CVV number."
+                            data-invalid="Please enter a valid CVV number."
+                        ></small>
+                    </div>
+                </fieldset>
+                <input type="submit" value="submit" class="button"/>
+                <input type="reset" value="reset" class="button"/>
             </form>
         </section>
-        <button>rebind events</button>
 
         <!-- build:js scripts/vendor.js -->
         <!-- bower:js -->
-        <script src="bower_components/jquery/jquery.js"></script>
+        <script src="bower_components/jquery/dist/jquery.min.js"></script>
+        <script src="bower_components/foundation/js/foundation.min.js"></script>
         <!-- endbower -->
         <!-- endbuild -->
 
@@ -102,21 +178,11 @@
         <!-- build:js scripts/main.js -->
         <script src="scripts/module/validate.js"></script>
         <script src="scripts/main.js"></script>
+        <script>$(document).foundation();</script>
         <!-- endbuild -->
 
         <!-- build:js scripts/plugins.js -->
-        <script src="bower_components/sass-bootstrap/js/affix.js"></script>
-        <script src="bower_components/sass-bootstrap/js/alert.js"></script>
-        <script src="bower_components/sass-bootstrap/js/dropdown.js"></script>
-        <script src="bower_components/sass-bootstrap/js/tooltip.js"></script>
-        <script src="bower_components/sass-bootstrap/js/modal.js"></script>
-        <script src="bower_components/sass-bootstrap/js/transition.js"></script>
-        <script src="bower_components/sass-bootstrap/js/button.js"></script>
-        <script src="bower_components/sass-bootstrap/js/popover.js"></script>
-        <script src="bower_components/sass-bootstrap/js/carousel.js"></script>
-        <script src="bower_components/sass-bootstrap/js/scrollspy.js"></script>
-        <script src="bower_components/sass-bootstrap/js/collapse.js"></script>
-        <script src="bower_components/sass-bootstrap/js/tab.js"></script>
+
         <!-- endbuild -->
 </body>
 </html>
