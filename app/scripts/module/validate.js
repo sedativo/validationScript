@@ -87,6 +87,7 @@
                 return this.createEvent();
             },
             createEvent : function(){
+
                 var valReset = new CustomEvent(
                     'validateReset',
                     {
@@ -134,7 +135,10 @@
                     if( $(this).is('select') ){
                         $(this).val('0')
                             .removeAttr('data-invalid')
-                            .removeAttr('data-valid');
+                            .removeAttr('data-valid')
+                            .addClass('pristine')
+                            .removeClass('dirty');
+
                     } else {
                         $(this).val('')
                             .removeClass('dirty')
@@ -144,6 +148,8 @@
                     }
 
                 });
+
+                this.activeForm.removeClass('invalid-empty');
 
                 return this.activeForm.data('toggle-submit') && this.toggleDisabled();
 
@@ -157,7 +163,9 @@
                     if( !$(this).val().length || $(this).val() === '0' ){
                         self.handleEmptyField($(this), submit);
                     }
-                    if( $(this).hasClass('pristine') && $(this).val().length ){
+                    if( ( $(this).is('input') && $(this).hasClass('pristine') && $(this).val().length )
+                        || ( $(this).is('select') && $(this).hasClass('pristine') && $(this).val() !== '0') ){
+
                         $(this).removeClass('pristine').addClass('dirty');
                     }
                     if( $(this).data('pattern') && $(this).val().length ){
@@ -171,7 +179,7 @@
                         var month = $('select[data-date="month"]').val(),
                             year = $('select[data-date="year"]').val();
 
-                        if(month === '0' || year === '0'){
+                        if( month === '0' || year === '0' ){
                             self.handleEmptyField($('select[data-date="year"]'));
                         } else {
                             self.handleDate(
@@ -183,7 +191,7 @@
                         }
 
                     }
-                    if( $(this).data('type') === 'date-input' && $(this).val().length){
+                    if( $(this).data('type') === 'date-input' && $(this).val().length  ){
                         self.formatDate($(this), $(this).val());
                     }
                     if( $(this).data('equal-to') && $(this).val().length ){
@@ -243,7 +251,8 @@
             canSubmitCheck : function(submit){
 
                 var feilds = this.activeForm.find('input[required], select[required]'),
-                    canSubmit = true;
+                    canSubmit = true,
+                    self = this;
 
                     feilds.each(function(){
 
@@ -253,13 +262,21 @@
 
                     });
 
+                if( !canSubmit && submit ){
+                    this.activeForm.addClass('invalid-empty');
+                }
+
                 if( canSubmit && this.isAjax ){
                     return this.activeForm.find('input[type="submit"]').trigger('callAjax');
                 }
 
                 if( canSubmit && submit ){
                     this.toggleDisabled(false);
+                    this.activeForm.removeClass('invalid-empty');
                     return this.activeForm.submit();
+                }
+                if( canSubmit ){
+                    this.activeForm.removeClass('invalid-empty');
                 }
 
                 return this.activeForm.data('toggle-submit') && this.toggleDisabled(canSubmit);

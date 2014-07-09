@@ -134,28 +134,44 @@ body {
         -moz-appearance: textfield !important;
         appearance: textfield !important;
     }
-    input[data-invalid],
-    select[data-invalid] {
-        border-color: $invalidBorder;
-        &:hover {
-           border-color: $invalidBorderHov;
-        }
-        ~ small.error {
+
+input.dirty[data-invalid],
+select.dirty[data-invalid] {
+    border-color: $invalidBorder;
+    &:hover {
+        border-color: $invalidBorderHov;
+    }
+    ~ small.error {
         display: block;
     }
 }
-    input[data-valid],
-    select[data-valid] {
-        border-color: $validBorder;
-        background: lighten($validBorder, 20%);
+
+form[data-handle-empty="true"] {
+    input.pristine[data-invalid],
+    select.pristine[data-invalid] {
+        border-color: $invalidBorder;
         &:hover {
-            border-color: $validBorderHov;
+            border-color: $invalidBorderHov;
         }
-         &:focus {
-            border-color: $validBorder;
-            box-shadow: 0 0 5px lighten($validBorder, 20%);
+        ~ small.error {
+            display: block;
         }
     }
+}
+
+input[data-valid],
+select[data-valid] {
+    border-color: $validBorder;
+    background: lighten($validBorder, 20%);
+    &:hover {
+        border-color: $validBorderHov;
+    }
+    &:focus {
+        border-color: $validBorder;
+        box-shadow: 0 0 5px lighten($validBorder, 20%);
+    }
+}
+
 select {
     &[data-type="date-select"] {
         margin-bottom: 0;
