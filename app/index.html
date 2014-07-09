@@ -15,7 +15,7 @@
         <!-- endbower -->
         <!-- endbuild -->
         <!-- build:css(.tmp) styles/main.css -->
-         <link rel="stylesheet" href="bower_components/foundation/css/foundation.css">
+        <link rel="stylesheet" href="bower_components/foundation/css/foundation.css">
         <link rel="stylesheet" href="styles/main.css">
         <!-- endbuild -->
         <script src="bower_components/modernizr/modernizr.js"></script>
@@ -23,9 +23,10 @@
     </head>
     <body>
         <section id="wrap">
-            <form id="myform" novalidate="novalidate" data-handle-empty="true" data-toggle-submit="true">
+            <form id="myform" novalidate="novalidate" data-handle-empty="false" data-toggle-submit="false">
+                <p class="alert-box alert empty-message">Please fill out the entire form</p>
                 <h2>Form validation plugin</h2>
-                <p class="message handleEmpty alert-box success columns large-5"
+                <!-- <p class="message handleEmpty alert-box success columns large-5"
                     data-valid-empty="Handle errors on empty field"
                     date-invalid-empty="Don't fire error messages on empty feild">Handle errors on empty field</p>
 
@@ -33,7 +34,7 @@
                     data-valid-submit="Toggle disabled on submit button during validation"
                     date-invalid-sibmit="Submit button allways active">Toggle disabled on submit button during validation</p>
                 <button class="toggleEmpty"> Handle empty feilds toggle </button>
-                <button class="toggleSubmit"> Validate disable submit toggle</button>
+                <button class="toggleSubmit"> Validate disable submit toggle</button> -->
                 <fieldset>
                     <div class="row">
                         <label>E-mail</label>
@@ -190,7 +191,7 @@
                         ></small>
                     </div>
                 </fieldset>
-                <input type="submit" value="submit" class="button is-disabled" disabled/>
+                <input type="submit" value="submit" class="button" />
             </form>
         </section>
 

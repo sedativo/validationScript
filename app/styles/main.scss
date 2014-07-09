@@ -134,7 +134,14 @@ body {
         -moz-appearance: textfield !important;
         appearance: textfield !important;
     }
-
+.empty-message {
+    display: none;
+}
+.invalid-empty {
+    .empty-message {
+        display: block;
+    }
+}
 input.dirty[data-invalid],
 select.dirty[data-invalid] {
     border-color: $invalidBorder;

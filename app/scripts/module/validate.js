@@ -31,7 +31,9 @@
                 this.settings.live_validate = settings ? settings.live_validate : this.settings.live_validate;
 
                 if(this.activeForm.data('toggle-submit')){
-                    this.activeForm.find('input[type="submit"]').attr('disabled', 'disabled');
+                    this.activeForm.find('input[type="submit"]')
+                        .attr('disabled', 'disabled')
+                        .addClass('is-disabled');
                 }
 
                 return this.bindEvents();
@@ -207,13 +209,11 @@
             },
             handleEmptyField : function(element, submit){
 
-                if( this.activeForm.data('handle-empty') || submit ){
-                    this.setMessage(element, 'empty', false);
-                }
-
                 if( element.hasClass('dirty') ){
                     element.removeClass('dirty').addClass('pristine');
                 }
+
+                this.setMessage(element, 'empty', false);
 
                 return this.activeForm.data('toggle-submit') && this.toggleDisabled(false);
 
@@ -389,6 +389,9 @@
                     valid = false,
                     type;
 
+                if( year === '0' ){
+                    return this.handleEmptyField(Eelement);
+                }
                 //decrement month value by 1 to match 0 indexed array
                 mvalTrim--;
 
