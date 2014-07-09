@@ -17,16 +17,40 @@ window.addEventListener('load', function(){
         form.parent().show();
         Validate.init(form);
     });
+
         Validate.init(form);
+        FormatFields.init(form);
 
     $('.toggleEmpty').on('click', function(e){
         e.preventDefault();
 
         var value = $('#myform').data('handle-empty');
+
+        if( $('.handleEmpty').hasClass('success') ){
+            $('.handleEmpty').removeClass('success').addClass('alert');
+        } else {
+            $('.handleEmpty').removeClass('alert').addClass('success');
+        }
+
         Validate.reset();
         return $('#myform').data('handle-empty', !value);
     });
 
+    $('.toggleSubmit').on('click', function(e){
+        e.preventDefault();
+
+        var value = $('#myform').data('toggle-submit');
+
+        if( $('.handlesubmit').hasClass('success') ){
+            $('.handlesubmit').removeClass('success').addClass('alert');
+            form.find('input[type="submit"]').removeAttr('disabled');
+        } else {
+            $('.handlesubmit').removeClass('alert').addClass('success');
+            form.find('input[type="submit"]').attr('disabled', 'disabled');
+
+        }
+        return $('#myform').data('toggle-submit', !value);
+    });
     }, false);
 
 

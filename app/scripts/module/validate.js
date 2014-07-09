@@ -24,9 +24,16 @@
             activeForm : null,
             isAjax : null,
             timer : null,
-            init : function(form, isAjax, settings){
+            init : function(form, settings){
+
                 this.activeForm = form;
-                this.isAjax = isAjax || null;
+                this.isAjax = settings ? settings.isAjax ? settings.isAjax : null : null;
+                this.settings.live_validate = settings ? settings.live_validate : this.settings.live_validate;
+
+                if(this.activeForm.data('toggle-submit')){
+                    this.activeForm.find('input[type="submit"]').attr('disabled', 'disabled');
+                }
+
                 return this.bindEvents();
             },
             bindEvents : function(){
@@ -34,15 +41,14 @@
                 var self = this;
 
                 this.activeForm.find('input[type="submit"]')
-                .off().on('click', function(e){
+                .on('click', function(e){
                     e.preventDefault();
                     self.validate(self.activeForm.find('input[required], select[required]'), true);
                 });
 
                 this.activeForm.find('input[required], select[required]')
-                .off()
                 .on('blur change', function(){
-                    console.log('event: '+event.type);
+                    clearTimeout(self.timer);
                     self.validate($(this), false);
                 })
                 .on('keyup', function(){
@@ -139,24 +145,26 @@
 
                 });
 
-                return this.toggleDisabled();
+                return this.activeForm.data('toggle-submit') && this.toggleDisabled();
 
             },
             validate : function(elements, submit){
-                console.log('validate');
                 var el = elements,
                     self = this;
 
                 el.each(function(){
-                    console.log($(this));
+
                     if( !$(this).val().length || $(this).val() === '0' ){
-                        self.handleEmptyField($(this));
+                        self.handleEmptyField($(this), submit);
                     }
                     if( $(this).hasClass('pristine') && $(this).val().length ){
                         $(this).removeClass('pristine').addClass('dirty');
                     }
                     if( $(this).data('pattern') && $(this).val().length ){
                         self.parsePattern($(this));
+                    }
+                    if( $(this).data('check') && $(this).val().length ){
+                        self.recheckEqualTo($(this).data('check'));
                     }
                     if( $(this).data('type') === 'date-select' ){
 
@@ -176,7 +184,6 @@
 
                     }
                     if( $(this).data('type') === 'date-input' && $(this).val().length){
-                        console.log('date value: '+ $(this).val());
                         self.formatDate($(this), $(this).val());
                     }
                     if( $(this).data('equal-to') && $(this).val().length ){
@@ -190,9 +197,9 @@
 
                 return this.canSubmitCheck(submit);
             },
-            handleEmptyField : function(element){
+            handleEmptyField : function(element, submit){
 
-                if( this.activeForm.data('handle-empty') ){
+                if( this.activeForm.data('handle-empty') || submit ){
                     this.setMessage(element, 'empty', false);
                 }
 
@@ -200,7 +207,7 @@
                     element.removeClass('dirty').addClass('pristine');
                 }
 
-                return this.toggleDisabled(false);
+                return this.activeForm.data('toggle-submit') && this.toggleDisabled(false);
 
             },
             parsePattern : function(element){
@@ -215,7 +222,6 @@
                 }
 
                 if( patterns.hasOwnProperty(pattern) && pattern.length ){
-
                     testVal = patterns[pattern];
                 } else if ( pattern.length ) {
                     testVal = new RegExp('^'+pattern+'$');
@@ -240,9 +246,11 @@
                     canSubmit = true;
 
                     feilds.each(function(){
+
                         if( $(this).attr('data-invalid') || $(this).hasClass('pristine') ){
                             canSubmit = false;
                         }
+
                     });
 
                 if( canSubmit && this.isAjax ){
@@ -254,7 +262,7 @@
                     return this.activeForm.submit();
                 }
 
-                return this.toggleDisabled(canSubmit);
+                return this.activeForm.data('toggle-submit') && this.toggleDisabled(canSubmit);
 
             },
             setMessage : function(element, type, valid){
@@ -265,11 +273,13 @@
                 messageEL.text(text);
 
                return this.setvalidity(element, valid);
+
             },
             setvalidity : function(element, valid){
 
-                return valid ? element.removeAttr('data-invalid').attr('data-valid', '') :
-                    element.removeAttr('data-valid').attr('data-invalid', '');
+                return valid ?
+                        element.removeAttr('data-invalid').attr('data-valid', 'true') :
+                        element.removeAttr('data-valid').attr('data-invalid', 'true');
 
             },
             toggleDisabled : function(canSubmit){
@@ -280,6 +290,10 @@
                         submitButton.removeClass('is-disabled').removeAttr('disabled') :
                         submitButton.addClass('is-disabled').attr('disabled', 'disabled');
 
+            },
+            recheckEqualTo : function(check){
+                var element = $('#'+check);
+                return element.hasClass('dirty') && this.handleEqualTo(element);
             },
             handleEqualTo : function(element){
 
@@ -300,7 +314,7 @@
 
             },
             handleCreditCard : function(element){
-                console.log('handle cc');
+
                 var el = element,
                     patterns = this.settings.patterns;
 
@@ -326,7 +340,7 @@
 
                 for ( var i = 0; i < number_length; i++ ) {
                     var digit = number.charAt(i);
-                    if ( i % 2 == parity ) {
+                    if ( i % 2 === parity ) {
                         digit = digit * 2;
                         if ( digit > 9 ) {
                             digit = digit - 9;
@@ -335,14 +349,13 @@
                     total = total + parseInt(digit);
                 }
 
-                return total % 10 == 0 ? true : false;
+                return total % 10 === 0 ? true : false;
             },
             formatDate : function(element, value){
 
                 var date = this.settings.patterns.date.test(value) ? value.split('/') : false,
                     month = date ? date[0] : null,
                     year = date ? date[1] : null;
-                    console.log('month : '+month+'\nyear: '+ year);
 
                 return date ? this.handleDate(month, year, element) : this.setMessage(element, 'invalid-format', false);
 
@@ -369,7 +382,7 @@
 
                 //date object value with expiration date
                 expDate.setFullYear(yval, mvalTrim, day, 23, 59, 59);
-                console.log('today: '+today+'\nexpiration date: '+expDate);
+
                 valid = (today > expDate) ? false : true;
                 type = valid ? '' : 'invalid';
 

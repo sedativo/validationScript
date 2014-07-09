@@ -101,10 +101,14 @@ body {
     }
     #myform {
         max-width: 39em;
-        padding: 5em;
+        padding: 2em 5em;
         margin: 0 auto;
         background: #fff;
         box-shadow: 0 5px 5px rgb(204, 204, 204);
+        @media screen and (max-width: 40em){
+            max-width: 100%;
+            padding: 1em;
+        }
     }
     label {
         float: left;
