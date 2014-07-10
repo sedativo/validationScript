@@ -29,7 +29,7 @@
                         this.handleNumeric(el);
                         break;
                     case 'date':
-                        this.handleDate(el, event)
+                        this.handleDate(el, event);
                         break;
                 }
 
@@ -67,7 +67,7 @@
                 }
 
                 if( value.length <= 2 ){
-                    newVal = this.formatMonth(value)
+                    newVal = this.formatMonth(value);
                 }
 
                 return element.val(newVal);
@@ -88,14 +88,14 @@
 
                 if( value.length === 2 ){
                     value = parseInt(value.substr(0,1)) <= 1 ?
-                            '20'+value : ( parseInt(value.substr(0,1)) === 2  && parseInt(value.substr(1,1) ) > 0) ?
+                            '20'+value : ( parseInt(value.substr(0,1)) === 2 && parseInt(value.substr(1,1) ) > 0) ?
                             '20'+value : parseInt(value.substr(0,1)) > 2 ?
                             '20'+value : value;
                 }
 
                 return value;
             }
-        }
+        };
     })();
 
     window.FormatFields = FormatFields;

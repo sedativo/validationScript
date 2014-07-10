@@ -110,18 +110,7 @@ body {
             padding: 1em;
         }
     }
-    label {
-        float: left;
-    }
-    small.error {
-        display: none;
-        color: #fff;
-        background: $invalidBorder;
-        padding: 0.3em 1em;
-        font-style: italic;
-        margin-top: -1rem;
-        clear: both;
-    }
+
     fieldset {
         margin-bottom: 2em;
     }
@@ -134,10 +123,21 @@ body {
         -moz-appearance: textfield !important;
         appearance: textfield !important;
     }
+
+//validation styles:
 .empty-message {
     display: none;
 }
-.invalid-empty {
+small.error {
+        display: none;
+        color: #fff;
+        background: $invalidBorder;
+        padding: 0.3em 1em;
+        font-style: italic;
+        margin-top: -1rem;
+        clear: both;
+}
+form.invalid-empty[data-handle-empty="false"] {
     .empty-message {
         display: block;
     }

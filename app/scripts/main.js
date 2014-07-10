@@ -1,7 +1,9 @@
 'use strict';
 var event = new CustomEvent('modalConfirmed', { detail:{ time: new Date() },bubbles: true,cancelable: true});
 window.addEventListener('load', function(){
-    var form = $('#myform');
+    var form = $('#myform'),
+        country = $('#fake_country'),
+        region = $('#region');
     var toggleEmpty = function(value){
         return !value;
     }
@@ -20,6 +22,7 @@ window.addEventListener('load', function(){
 
         Validate.init(form);
         FormatFields.init(form);
+        AVSAutoComp.init(form, country, region)
 
     $('.toggleEmpty').on('click', function(e){
         e.preventDefault();

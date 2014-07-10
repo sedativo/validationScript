@@ -12,6 +12,7 @@
                     email : /^([\w-\.]+@([\w-]+\.)+[\w-]{2,4})?$/,
                     cvv : /^[0-9]{3,4}$/,
                     password : /^.{6,}$/,
+                    state : /^.{0,80}$/,
                     postalcode : /^[A-Z0-9\-]{3,10}$/i,
                     //date formatt MM/YYYY
                     date : /^(0[1-9]|1[012])[- \/.]\d{4}$/,
@@ -48,13 +49,15 @@
                     self.validate(self.activeForm.find('input[required], select[required]'), true);
                 });
 
-                this.activeForm.find('input[required], select[required]')
-                .on('blur change', function(){
-                    clearTimeout(self.timer);
+                this.activeForm
+                .on('blur change','input[required], select[required]', function(){
+                    if( self.settings.live_validate ){
+                        clearTimeout(self.timer);
+                    }
                     self.validate($(this), false);
                 })
-                .on('keyup', function(){
-                    if(self.settings.live_validate){
+                .on('keyup', 'input[required], select[required]', function(){
+                    if( self.settings.live_validate ){
                         clearTimeout(self.timer);
                         self.timer = setTimeout(function(){
                             self.validate($(this), false);
@@ -161,14 +164,19 @@
                     self = this;
 
                 el.each(function(){
-
+                    //handle all empty inputs
                     if( !$(this).val().length || $(this).val() === '0' ){
                         self.handleEmptyField($(this), submit);
                     }
-                    if( ( $(this).is('input') && $(this).hasClass('pristine') && $(this).val().length )
-                        || ( $(this).is('select') && $(this).hasClass('pristine') && $(this).val() !== '0') ){
+                    //if input/select box has value other than 0,
+                    if( ( $(this).is('input') && $(this).hasClass('pristine') && $(this).val().length ) ||
+                        ( $(this).is('select') && $(this).hasClass('pristine') && $(this).val() !== '0') ){
 
                         $(this).removeClass('pristine').addClass('dirty');
+
+                        if($(this).data('select')){
+                            self.setvalidity($(this), true);
+                        }
                     }
                     if( $(this).data('pattern') && $(this).val().length ){
                         self.parsePattern($(this));
@@ -201,6 +209,9 @@
                     }
                     if( $(this).attr('type') === 'checkbox' ){
                         self.handleCheckBox($(this));
+                    }
+                    if( $(this).attr('type') === 'radio' ){
+                        self.handleRadio($(this));
                     }
 
                 });
@@ -275,6 +286,7 @@
                     this.activeForm.removeClass('invalid-empty');
                     return this.activeForm.submit();
                 }
+
                 if( canSubmit ){
                     this.activeForm.removeClass('invalid-empty');
                 }
@@ -325,9 +337,40 @@
             handleCheckBox : function(element){
 
                 var valid = element.is(':checked') ? true : false,
-                    type = valid ? '' : 'invalid';
+                    type = valid ? '' : 'empty';
+
+                    if( valid ) {
+                        element.addClass('dirty').removeClass('pristine');
+                    } else {
+                        element.addClass('pristine').removeClass('dirty');
+                    }
+
 
                 return this.setMessage(element, type, valid);
+
+            },
+            handleRadio : function(element){
+
+                var name = element.attr('name'),
+                    group = $('radiogroup[data-group="'+name+'"]').find('input[type="radio"]'),
+                    valid = false,
+                    self = this;
+
+                    group.each(function(){
+                        if( $(this).is(':checked') ){
+                            valid = true;
+                        }
+                    });
+
+                    group.each(function(){
+                        if( valid ) {
+                            $(this).addClass('dirty').removeClass('pristine');
+                            self.setMessage($(this), '', true);
+                        } else {
+                           $(this).addClass('pristine').removeClass('dirty');
+                            self.setMessage($(this), 'empty', false);
+                        }
+                    });
 
             },
             handleCreditCard : function(element){
@@ -341,8 +384,11 @@
                 if ( patterns.cc.mastercard.test(el.val()) && !this.luhnCheck(el.val()) ){
                     return this.setMessage(element, 'invalid-mc', false);
                 }
-                if ( ( !patterns.cc.mastercard.test(el.val()) || !patterns.cc.visa.test(el.val()) )
-                        && !this.luhnCheck(el.val()) ){
+                if ( ( !patterns.cc.mastercard.test(el.val()) || !patterns.cc.visa.test(el.val()) ) &&
+                    !this.luhnCheck(el.val()) ){
+
+                    console.log('invalid number');
+
                     return this.setMessage(element, 'invalid', false);
                 }
                 return this.setMessage(element, '', true);
