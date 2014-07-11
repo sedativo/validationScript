@@ -1,4 +1,4 @@
-(function(window, document, undefined){
+(function($, window, document, undefined){
     'use strict';
 
     var Validate = (function(){
@@ -28,8 +28,14 @@
             init : function(form, settings){
 
                 this.activeForm = form;
-                this.isAjax = settings ? settings.isAjax ? settings.isAjax : null : null;
-                this.settings.live_validate = settings ? settings.live_validate : this.settings.live_validate;
+                this.isAjax = settings ? 
+                              settings.isAjax ?
+                              settings.isAjax : null : null;
+                this.settings.live_validate = settings ? 
+                                              settings.live_validate ? 
+                                              settings.live_validate : this.settings.live_validate : 
+                                              this.settings.live_validate;
+                
 
                 if(this.activeForm.data('toggle-submit')){
                     this.activeForm.find('input[type="submit"]')
@@ -46,6 +52,7 @@
                 this.activeForm.find('input[type="submit"]')
                 .on('click', function(e){
                     e.preventDefault();
+                    console.log('submit validate');
                     self.validate(self.activeForm.find('input[required], select[required]'), true);
                 });
 
@@ -277,11 +284,12 @@
                     this.activeForm.addClass('invalid-empty');
                 }
 
-                if( canSubmit && this.isAjax ){
+                if( canSubmit && this.isAjax && submit ){
+                    this.activeForm.removeClass('invalid-empty');
                     return this.activeForm.find('input[type="submit"]').trigger('callAjax');
                 }
 
-                if( canSubmit && submit ){
+                if( canSubmit && submit && !this.isAjax ){
                     this.toggleDisabled(false);
                     this.activeForm.removeClass('invalid-empty');
                     return this.activeForm.submit();
@@ -387,8 +395,6 @@
                 if ( ( !patterns.cc.mastercard.test(el.val()) || !patterns.cc.visa.test(el.val()) ) &&
                     !this.luhnCheck(el.val()) ){
 
-                    console.log('invalid number');
-
                     return this.setMessage(element, 'invalid', false);
                 }
                 return this.setMessage(element, '', true);
@@ -460,6 +466,13 @@
         };
     })();
 
+    $.fn.validate = function(settings){
+        return this.each(function(){
+            var validate = Object.create(Validate);
+            validate.init($(this), settings);
+        });
+    }
+
     window.Validate = Validate;
 
-})(this, this.document);
+})(jQuery, this, this.document);
