@@ -52,7 +52,7 @@
 
                 var self = this;
 
-                this.activeForm.find('#fake_country')
+                this.countryEl
                 .on('change', function(){
                     return self.createElements();
                 });

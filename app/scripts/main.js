@@ -1,7 +1,23 @@
 'use strict';
 var event = new CustomEvent('modalConfirmed', { detail:{ time: new Date() },bubbles: true,cancelable: true});
 window.addEventListener('load', function(){
+    var timeout;
     $('form').validate({isAjax: true});
+
+    $('form').find('input[type=submit]')
+    .on('click', function(e){
+        e.preventDefault();
+        clearTimeout(timeout);
+        console.log($(this).parents('form'));
+        if($(this).parents('form').hasClass('invalid-empty')){
+             timeout = setTimeout(function(){
+                $('body').stop().animate({scrollTop:0}, 500);
+            }, 100);
+        }
+    });
+    AVSAutoComp.init($('#myForm'), $('#fake_country'), $('#region'));
+    $('#myform').formatVal();
+    $('#anotherForm').formatVal();
     // var form = $('#myform'),
     //     country = $('#fake_country'),
     //     region = $('#region');

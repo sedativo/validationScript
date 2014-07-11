@@ -1,4 +1,4 @@
-(function(window, document, undefined){
+(function($, window, document, undefined){
 
     'use strict';
 
@@ -11,10 +11,11 @@
                 return this.bindEvents();
             },
             bindEvents : function(form){
-
+                console.log('bindevents format');
                 var self = this;
 
-                this.activeForm.find('input[data-format]').on('keyup', function(e){
+                this.activeForm.on('keyup', 'input[data-format]', function(e){
+                    console.log($(this).val());
                    self.parseFormat($(this), e);
                 });
 
@@ -97,7 +98,12 @@
             }
         };
     })();
-
+    $.fn.formatVal = function(){
+        return this.each(function(){
+            var format = Object.create(FormatFields);
+            format.init($(this));
+        });
+    }
     window.FormatFields = FormatFields;
 
-})(this, this.document);
+})(jQuery, this, this.document);

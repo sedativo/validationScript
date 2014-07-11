@@ -169,20 +169,27 @@
             validate : function(elements, submit){
                 var el = elements,
                     self = this;
-
                 el.each(function(){
+                    if($(this).is('select')){
+                        console.log($(this)[0].selectedIndex);
+                        console.log($(this).val());
+                    }
                     //handle all empty inputs
-                    if( !$(this).val().length || $(this).val() === '0' ){
+                    if( !$(this).val().length || ($(this).val().length === 0 && $(this)[0].selectedIndex === 0) ){
+                        console.log('handle empty');
                         self.handleEmptyField($(this), submit);
                     }
                     //if input/select box has value other than 0,
-                    if( ( $(this).is('input') && $(this).hasClass('pristine') && $(this).val().length ) ||
-                        ( $(this).is('select') && $(this).hasClass('pristine') && $(this).val() !== '0') ){
+                    if( $(this).is('input') && $(this).hasClass('pristine') || $(this).is('select') && $(this).hasClass('pristine') ){
 
-                        $(this).removeClass('pristine').addClass('dirty');
-
-                        if($(this).data('select')){
+                        if( $(this).val().length && $(this)[0].selectedIndex !== 0 ){
+                            $(this).removeClass('pristine').addClass('dirty');
                             self.setvalidity($(this), true);
+                        }
+                        
+
+                        if( $(this).val().length ){
+                            $(this).removeClass('pristine').addClass('dirty');
                         }
                     }
                     if( $(this).data('pattern') && $(this).val().length ){
@@ -193,18 +200,15 @@
                     }
                     if( $(this).data('type') === 'date-select' ){
 
-                        var month = $('select[data-date="month"]').val(),
-                            year = $('select[data-date="year"]').val();
+                        var month = self.activeForm.find('select[data-date="month"]'),
+                            year = self.activeForm.find('select[data-date="year"]'),
+                            mval = month.val(),
+                            yval = year.val();
 
                         if( month === '0' || year === '0' ){
                             self.handleEmptyField($('select[data-date="year"]'));
                         } else {
-                            self.handleDate(
-                                $('select[data-date="month"]').val(),
-                                $('select[data-date="year"]').val(),
-                                $('select[data-date="year"]'),
-                                $('select[data-date="month"]')
-                            );
+                            self.handleDate(mval, yval, year, month);
                         }
 
                     }
@@ -226,7 +230,8 @@
                 return this.canSubmitCheck(submit);
             },
             handleEmptyField : function(element, submit){
-
+                console.log(element);
+                console.log(element.attr('class'));
                 if( element.hasClass('dirty') ){
                     element.removeClass('dirty').addClass('pristine');
                 }
@@ -303,7 +308,7 @@
 
             },
             setMessage : function(element, type, valid){
-
+                console.log('set message+ valid: '+valid);
                 var messageEL = element.siblings('small'),
                     text = messageEL.data(type) ? messageEL.data(type) : '';
 
@@ -313,7 +318,7 @@
 
             },
             setvalidity : function(element, valid){
-
+                console.log('set valid + valid: '+valid);
                 return valid ?
                         element.removeAttr('data-invalid').attr('data-valid', 'true') :
                         element.removeAttr('data-valid').attr('data-invalid', 'true');
@@ -360,10 +365,10 @@
             handleRadio : function(element){
 
                 var name = element.attr('name'),
-                    group = $('radiogroup[data-group="'+name+'"]').find('input[type="radio"]'),
+                    group = this.activeForm.find('radiogroup[data-group="'+name+'"]').children('input[type="radio"]'),
                     valid = false,
                     self = this;
-
+                    console.log(group);
                     group.each(function(){
                         if( $(this).is(':checked') ){
                             valid = true;
