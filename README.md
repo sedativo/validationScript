@@ -200,17 +200,14 @@
 
 <p>Changing settings</p>
 <pre>
-
-  //if you want to change the default elements 
+  //if you want to change the default elements
   //for country drop down and region wrapper
-  
   $('form').avsAuto(
       { 
         country: $('#country_dropdown'), 
         region: $('#region_wrapper') 
       }
   ):
-
 </re>
 
 
