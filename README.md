@@ -4,7 +4,7 @@
 <ul>
   <li><a href="https://github.com/sedativo/validationScript/blob/master/README.md#validation-script-plugin">Validation Plugin</a></li>
   <li><a href="https://github.com/sedativo/validationScript/blob/master/README.md#avs-auto-complete-plugin">Avs Auto complete</a></li>
-  <li><a href="#support">Supported Browsers</a></li>
+  <li><a href="https://github.com/sedativo/validationScript/blob/master/README.md#browser-support">Supported Browsers</a></li>
 </ul>
 
 <h2 id="#valid">Validation Script Plugin</h2>
