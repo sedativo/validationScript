@@ -114,3 +114,25 @@
   &lt;/div&gt;
 
 </pre>
+<h2>Default plugin settings</h2>
+<pre>
+            settings : {
+                live_validate: true,
+                timeout : 1000,
+                patterns : {
+                    name : /^[a-z ,.'-]+$/i,
+                    email : /^([\w-\.]+@([\w-]+\.)+[\w-]{2,4})?$/,
+                    cvv : /^[0-9]{3,4}$/,
+                    password : /^.{6,}$/,
+                    state : /^.{0,80}$/,
+                    postalcode : /^[A-Z0-9\-]{3,10}$/i,
+                    //date formatt MM/YYYY
+                    date : /^(0[1-9]|1[012])[- \/.]\d{4}$/,
+                    cc : {
+                        visa : /^4[0-9]{12,15}$/,
+                        mastercard : /^5[0-9]{15}$/,
+                    }
+                }
+            },
+            isAjax : null,
+</pre>
