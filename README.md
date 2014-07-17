@@ -8,6 +8,7 @@
   <li>novalidate="novalidate" : *this stops the browsers default input validation</li>
   <li>data-toggle-submit="[true/false]" : default value is false, will toggle disabled attribute on submit button when true</li>
   <li>data-handle-empty="[true/false]" : default value is false, will show error messages for empty inputs when true</li>
+  <li>data-type="date-input" : this is required when validating a date using a single input</li>
 </ul>
 <small>all attributes marked with * are required for this plugin to work</small>
 
@@ -67,3 +68,34 @@
   &lt;select &gt;
   
 </pre>
+
+<h2>Attributes for checkboxes and radios</h2>
+<ul>
+  <li>required : this is all that is required for checkboxes, radios need additional attributes</li>
+  <li>data-group="name of radio group" : required on radios wrapping element</li>
+</ul>
+
+<pre>
+
+  &lt;label&gt;Checkbox&lt;/label&gt;
+  &lt;input "type="checkbox id="someID" required &gt;
+
+
+  &lt;label&gt;Select date&lt;/label&gt;
+  &lt;radiogroup data-group="someName"&gt;
+    &lt;type="radio" name="someName" value="1" required &gt;
+    &lt;type="radio" name="someName" value="2" required &gt;
+  &lt;radiogroup&gt;
+  
+</pre>
+
+<h2>Attributes for Error messages</h2>
+
+<ul>
+  <li>data-empty="some error message for empty field" : *required when handling empty feilds</li>
+  <li>data-invalid="some error message for invalid value in field" : *required for invalid fields</li>
+  <li>data-not-equal="some error message when field does not match another input value" : required for matching values</li>
+  <li>data-invalid-format="Please enter a valid expiration date: MM/YYYY." : used by single input date validation</li>
+  <li>data-invalid-visa="Please enter a valid Visa number." : used by credit card validation</li>
+  <li>data-invalid-mc="Please enter a valid Mastercard number." : used by credit card validation</li>
+</ul>
