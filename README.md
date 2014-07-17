@@ -53,14 +53,17 @@
 
 <pre>
 
-  &lt;select data-select="true" required &gt;
+  &lt;label&gt;Select Language&lt;/label&gt;
+  &lt;select id="someID" data-select="true" required &gt;
     //options 
   &lt;select &gt;
 
-  &lt;select data-type="date-select" data-date="month" required &gt;
+  &lt;label&gt;Select date&lt;/label&gt;
+  &lt;select id="month" data-type="date-select" data-date="month" required &gt;
     //options 
   &lt;select &gt;
-  &lt;select data-type="date-select" data-date="year" required &gt;
+  &lt;select id="year" data-type="date-select" data-date="year" required &gt;
     //options 
   &lt;select &gt;
+  
 </pre>
