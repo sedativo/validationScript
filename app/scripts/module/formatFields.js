@@ -10,12 +10,10 @@
                 this.activeForm = form;
                 return this.bindEvents();
             },
-            bindEvents : function(form){
-                console.log('bindevents format');
+            bindEvents : function(){
                 var self = this;
 
                 this.activeForm.on('keyup', 'input[data-format]', function(e){
-                    console.log($(this).val());
                    self.parseFormat($(this), e);
                 });
 
@@ -98,12 +96,14 @@
             }
         };
     })();
+
     $.fn.formatVal = function(){
         return this.each(function(){
             var format = Object.create(FormatFields);
             format.init($(this));
         });
-    }
+    };
+
     window.FormatFields = FormatFields;
 
 })(jQuery, this, this.document);

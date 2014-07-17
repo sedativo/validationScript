@@ -1,4 +1,4 @@
-(function(window, document, undefined){
+(function($, window, document, undefined){
     'use strict';
     var AVSAutoComp = (function(){
         return {
@@ -40,11 +40,12 @@
             activeForm : null,
             countryEL : null,
             regionCon : null,
-            init : function(form, countryEl, regionCon){
+            init : function(form, settings){
 
                 this.activeForm = form;
-                this.countryEl = countryEl;
-                this.regionCon = regionCon;
+                this.countryEl = settings ? settings.country : $('#fake_country');
+                this.regionCon = settings ? settings.region : $('#region');
+
                 return this.bindEvents();
 
             },
@@ -105,6 +106,13 @@
         };
     })();
 
+    $.fn.avsAuto = function(settings){
+        return this.each(function(){
+            var func = Object.create(AVSAutoComp);
+            func.init($(this), settings);
+        });
+    };
+
     window.AVSAutoComp = AVSAutoComp;
 
-})(this, this.document);
+})(jQuery, this, this.document);

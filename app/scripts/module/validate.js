@@ -5,9 +5,11 @@
 
         return {
             settings : {
-                live_validate: true,
+                liveValidate: true,
                 timeout : 1000,
                 patterns : {
+                    phone : /^(?:(?:\(?(?:00|\+)([1-4]\d\d|[1-9]\d?)\)?)?[\-\.\ \\\/]?)?((?:\(?\d{1,}\)?[\-\.\ \\\/]?){0,})(?:[\-\.\ \\\/]?(?:#|ext\.?|extension|x)[\-\.\ \\\/]?(\d+))?$/i,
+                    alphaNumeric : /^[a-zA-Z0-9]+$/,
                     name : /^[a-z ,.'-]+$/i,
                     email : /^([\w-\.]+@([\w-]+\.)+[\w-]{2,4})?$/,
                     cvv : /^[0-9]{3,4}$/,
@@ -24,25 +26,33 @@
             },
             activeForm : null,
             isAjax : null,
-            timer : null,
+            toggleSubmit : null,
             init : function(form, settings){
 
                 this.activeForm = form;
-                this.isAjax = settings ? 
+                this.isAjax = settings ?
                               settings.isAjax ?
                               settings.isAjax : null : null;
-                this.settings.live_validate = settings ? 
-                                              settings.live_validate ? 
-                                              settings.live_validate : this.settings.live_validate : 
-                                              this.settings.live_validate;
-                
+                this.settings.liveValidate = settings ?
+                                            settings.liveValidate ?
+                                            settings.liveValidate : this.settings.liveValidate :
+                                            this.settings.liveValidate;
 
-                if(this.activeForm.data('toggle-submit')){
+                this.toggleSubmit = form.data('toggle-submit') || false;
+
+                if( !form.attr('data-handle-empty') ){
+                    form.attr('data-handle-empty', 'false');
+                }
+
+
+                if( this.toggleSubmit ){
                     this.activeForm.find('input[type="submit"]')
                         .attr('disabled', 'disabled')
                         .addClass('is-disabled');
                 }
-
+                if(!form.find('[required]').hasClass('dirty') || !form.find('[required]').hasClass('pristine')){
+                    form.find('[required]').addClass('pristine');
+                }
                 return this.bindEvents();
             },
             bindEvents : function(){
@@ -52,19 +62,18 @@
                 this.activeForm.find('input[type="submit"]')
                 .on('click', function(e){
                     e.preventDefault();
-                    console.log('submit validate');
                     self.validate(self.activeForm.find('input[required], select[required]'), true);
                 });
 
                 this.activeForm
                 .on('blur change','input[required], select[required]', function(){
-                    if( self.settings.live_validate ){
+                    if( self.settings.liveValidate ){
                         clearTimeout(self.timer);
                     }
                     self.validate($(this), false);
                 })
                 .on('keyup', 'input[required], select[required]', function(){
-                    if( self.settings.live_validate ){
+                    if( self.settings.liveValidate ){
                         clearTimeout(self.timer);
                         self.timer = setTimeout(function(){
                             self.validate($(this), false);
@@ -72,29 +81,23 @@
                     }
                 });
 
-                // this.activeForm.find('input[type="reset"]')
-                // .on('click', function(){
-
-                //     if($(this).data('confirm')){
-                //         console.log('broadcast reset');
-                //         self.activeForm.trigger('validateReset');
-                //         return;
-                //     }
-
-                //     return self.reset.call(self);
-                // })
-                // .on('modalConfirmed', function(){
-                //     console.log('modal confirmed reset form');
-                //     self.reset.call(self);
-
-                //     return self.removeEvents();
-
-                // })
-                // .on('ajaxDone', function(){
-
-                //     return self.reset.call(self);
-
-                // });
+                this.activeForm.find('input[type="reset"]')
+                .on('click', function(e){
+                    e.preventDefault();
+                    e.stopPropagation();
+                    if($(this).data('confirm')){
+                        self.activeForm.trigger('validateReset');
+                        return;
+                    }
+                    return self.reset.call(self);
+                });
+                this.activeForm
+                .on('resetConfirmed', function(){
+                    return self.reset.call(self);
+                })
+                .on('ajaxDone', function(){
+                    return self.reset.call(self);
+                });
 
                 return this.createEvent();
             },
@@ -170,27 +173,24 @@
                 var el = elements,
                     self = this;
                 el.each(function(){
-                    if($(this).is('select')){
-                        console.log($(this)[0].selectedIndex);
-                        console.log($(this).val());
-                    }
+
                     //handle all empty inputs
-                    if( !$(this).val().length || ($(this).val().length === 0 && $(this)[0].selectedIndex === 0) ){
-                        console.log('handle empty');
+                    if( !$(this).val().length ||
+                        ($(this).val().length === 0 &&
+                        $(this)[0].selectedIndex === 0 ) ){
+
                         self.handleEmptyField($(this), submit);
+
                     }
                     //if input/select box has value other than 0,
-                    if( $(this).is('input') && $(this).hasClass('pristine') || $(this).is('select') && $(this).hasClass('pristine') ){
-
-                        if( $(this).val().length && $(this)[0].selectedIndex !== 0 ){
-                            $(this).removeClass('pristine').addClass('dirty');
-                            self.setvalidity($(this), true);
-                        }
-                        
-
+                    if( $(this).is('input') && $(this).hasClass('pristine') ){
                         if( $(this).val().length ){
                             $(this).removeClass('pristine').addClass('dirty');
                         }
+                    }
+                    if( $(this).data('select') && $(this).val().length ){
+                        $(this).removeClass('pristine').addClass('dirty');
+                        self.setvalidity($(this), true);
                     }
                     if( $(this).data('pattern') && $(this).val().length ){
                         self.parsePattern($(this));
@@ -200,14 +200,16 @@
                     }
                     if( $(this).data('type') === 'date-select' ){
 
-                        var month = self.activeForm.find('select[data-date="month"]'),
-                            year = self.activeForm.find('select[data-date="year"]'),
+                        var month = self.activeForm.find('[data-date="month"]'),
+                            year = self.activeForm.find('[data-date="year"]'),
                             mval = month.val(),
                             yval = year.val();
 
-                        if( month === '0' || year === '0' ){
-                            self.handleEmptyField($('select[data-date="year"]'));
+                        if( mval === '0' || yval === '0' ){
+                            self.setvalidity($(this), false);
+                            self.handleEmptyField(year);
                         } else {
+                            $(this).removeClass('pristine').addClass('dirty');
                             self.handleDate(mval, yval, year, month);
                         }
 
@@ -230,8 +232,7 @@
                 return this.canSubmitCheck(submit);
             },
             handleEmptyField : function(element, submit){
-                console.log(element);
-                console.log(element.attr('class'));
+
                 if( element.hasClass('dirty') ){
                     element.removeClass('dirty').addClass('pristine');
                 }
@@ -277,13 +278,12 @@
                     canSubmit = true,
                     self = this;
 
-                    feilds.each(function(){
+                feilds.each(function(i, v){
+                    if( $(this).attr('data-invalid') || $(this).hasClass('pristine') ){
+                        canSubmit = false;
+                    }
 
-                        if( $(this).attr('data-invalid') || $(this).hasClass('pristine') ){
-                            canSubmit = false;
-                        }
-
-                    });
+                });
 
                 if( !canSubmit && submit ){
                     this.activeForm.addClass('invalid-empty');
@@ -303,22 +303,20 @@
                 if( canSubmit ){
                     this.activeForm.removeClass('invalid-empty');
                 }
-
                 return this.activeForm.data('toggle-submit') && this.toggleDisabled(canSubmit);
 
             },
             setMessage : function(element, type, valid){
-                console.log('set message+ valid: '+valid);
-                var messageEL = element.siblings('small'),
+
+                var messageEL = element.siblings('.error'),
                     text = messageEL.data(type) ? messageEL.data(type) : '';
 
                 messageEL.text(text);
 
-               return this.setvalidity(element, valid);
+                return this.setvalidity(element, valid);
 
             },
             setvalidity : function(element, valid){
-                console.log('set valid + valid: '+valid);
                 return valid ?
                         element.removeAttr('data-invalid').attr('data-valid', 'true') :
                         element.removeAttr('data-valid').attr('data-invalid', 'true');
@@ -352,11 +350,11 @@
                 var valid = element.is(':checked') ? true : false,
                     type = valid ? '' : 'empty';
 
-                    if( valid ) {
-                        element.addClass('dirty').removeClass('pristine');
-                    } else {
-                        element.addClass('pristine').removeClass('dirty');
-                    }
+                if( valid ) {
+                    element.addClass('dirty').removeClass('pristine');
+                } else {
+                    element.addClass('pristine').removeClass('dirty');
+                }
 
 
                 return this.setMessage(element, type, valid);
@@ -368,22 +366,22 @@
                     group = this.activeForm.find('radiogroup[data-group="'+name+'"]').children('input[type="radio"]'),
                     valid = false,
                     self = this;
-                    console.log(group);
-                    group.each(function(){
-                        if( $(this).is(':checked') ){
-                            valid = true;
-                        }
-                    });
 
-                    group.each(function(){
-                        if( valid ) {
-                            $(this).addClass('dirty').removeClass('pristine');
-                            self.setMessage($(this), '', true);
-                        } else {
-                           $(this).addClass('pristine').removeClass('dirty');
-                            self.setMessage($(this), 'empty', false);
-                        }
-                    });
+                group.each(function(){
+                    if( $(this).is(':checked') ){
+                        valid = true;
+                    }
+                });
+
+                group.each(function(){
+                    if( valid ) {
+                        $(this).addClass('dirty').removeClass('pristine');
+                        self.setMessage($(this), '', true);
+                    } else {
+                        $(this).addClass('pristine').removeClass('dirty');
+                        self.setMessage($(this), 'empty', false);
+                    }
+                });
 
             },
             handleCreditCard : function(element){
@@ -408,11 +406,11 @@
             luhnCheck : function(value){
 
                 var number = value.replace(/\D/g, ''),
-                    number_length = number.length,
-                    parity = number_length % 2,
+                    numberLength = number.length,
+                    parity = numberLength % 2,
                     total = 0;
 
-                for ( var i = 0; i < number_length; i++ ) {
+                for ( var i = 0; i < numberLength; i++ ) {
                     var digit = number.charAt(i);
                     if ( i % 2 === parity ) {
                         digit = digit * 2;
@@ -464,6 +462,9 @@
                 type = valid ? '' : 'invalid';
 
                 if(Melement){
+                    if(valid){
+                        Melement.removeClass('pristine').addClass('dirty');
+                    }
                     this.setvalidity(Melement, valid);
                 }
                 return this.setMessage(Eelement, type, valid);
@@ -476,7 +477,7 @@
             var validate = Object.create(Validate);
             validate.init($(this), settings);
         });
-    }
+    };
 
     window.Validate = Validate;
 
