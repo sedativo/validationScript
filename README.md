@@ -91,11 +91,26 @@
 
 <h2>Attributes for Error messages</h2>
 
-<ul>
-  <li>data-empty="some error message for empty field" : *required when handling empty feilds</li>
-  <li>data-invalid="some error message for invalid value in field" : *required for invalid fields</li>
-  <li>data-not-equal="some error message when field does not match another input value" : required for matching values</li>
-  <li>data-invalid-format="Please enter a valid expiration date: MM/YYYY." : used by single input date validation</li>
-  <li>data-invalid-visa="Please enter a valid Visa number." : used by credit card validation</li>
-  <li>data-invalid-mc="Please enter a valid Mastercard number." : used by credit card validation</li>
-</ul>
+  <ul>
+    <li>data-empty="some error message for empty field" : *required when handling empty feilds</li>
+    <li>data-invalid="some error message for invalid value in field" : *required for invalid fields</li>
+    <li>data-not-equal="some error message when field does not match another input value" : required for matching values</li>
+    <li>data-invalid-format="Please enter a valid expiration date: MM/YYYY." : used by single input date validation</li>
+    <li>data-invalid-visa="Please enter a valid Visa number." : used by credit card validation</li>
+    <li>data-invalid-mc="Please enter a valid Mastercard number." : used by credit card validation</li>
+  </ul>
+
+<pre>
+
+  &lt;div class="row"&gt;
+    &lt;label&gt;Email&lt;/label&gt;
+    &lt;input type="email" id="email" data-pattern="email" data-check="email-confirm" required &gt;
+  
+    &lt;small
+            class="error"
+            data-empty="Please enter an email address"
+            data-invalid="Please enter a valid email address" &gt;
+    &lt;/small&gt;
+  &lt;/div&gt;
+
+</pre>
