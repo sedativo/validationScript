@@ -203,7 +203,6 @@
 
   //if you want to change the default elements
   //for country drop down and region wrapper
-  
   $('form').avsAuto(
       { 
         country: $('#country_dropdown'), 
