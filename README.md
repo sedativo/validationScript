@@ -44,3 +44,23 @@
 <small>all attributes marked with * are required for this plugin to work</small>
 
 <h2>Attributes for Select boxes</h2>
+<ul>
+  <li>required</li>
+  <li>data-select="true" : this is required for generic select boxes</li>
+  <li>data-type="date-select" : this is required for validating a pair of select boxes </li>
+  <li>data-date="[month/year]" : this is required if data-type is date-select and drop down is month/year</li>
+</ul>
+
+<pre>
+
+  &lt;select data-select="true" required &gt;
+    //options 
+  &lt;select &gt;
+
+  &lt;select data-type="date-select" data-date="month" required &gt;
+    //options 
+  &lt;select &gt;
+  &lt;select data-type="date-select" data-date="year" required &gt;
+    //options 
+  &lt;select &gt;
+</pre>
