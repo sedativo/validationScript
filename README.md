@@ -13,7 +13,12 @@
 
 <pre>
   
-  <form id="someID" action="someAction" data-toggle-submit="true" data-handle-empty="false" novalidate="novalidate"></form>
+  &lt;form id="someID" 
+           action="someAction"
+           data-toggle-submit="true" 
+           data-handle-empty="false"
+           novalidate="novalidate"&gt;
+  &lt;/form&gt;
 
 </pre>
 
@@ -27,11 +32,13 @@
 </ul>
 
 <pre>
-  <label>Email</label>
-  <input type="email" id="email" data-pattern="email" data-check="email-confirm" required />
 
-  <label>Confirm Email</label>  
-  <input type="email" id="email-confirm" data-equal-to="email" required />
+  &lt;label&gt;Email&lt;/label&gt;
+  &lt;input type="email" id="email" data-pattern="email" data-check="email-confirm" required &gt;
+
+  &lt;label>Confirm Email&lt;/label>  
+  &lt;input type="email" id="email-confirm" data-equal-to="email" required &gt;
+
 </pre>
 
 <small>all attributes marked with * are required for this plugin to work</small>
