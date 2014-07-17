@@ -2,7 +2,7 @@
 
 <p>This script for validating form values depends on data attributes in the mark up for defining matching patterns and error messages.</p>
 
-<h2>Default attributes on form tag</h2>
+<h3>Default attributes on form tag</h3>
 
 <ul>
   <li>novalidate="novalidate" : *this stops the browsers default input validation</li>
@@ -23,7 +23,7 @@
 
 </pre>
 
-<h2>Attributes for Inputs: </h2>
+<h3>Attributes for Inputs: </h3>
 
 <ul>
   <li>required : *all fields to be validated by the plugin need the required attribute.</li>
@@ -44,7 +44,7 @@
 
 <small>all attributes marked with * are required for this plugin to work</small>
 
-<h2>Attributes for Select boxes</h2>
+<h3>Attributes for Select boxes</h3>
 <ul>
   <li>required</li>
   <li>data-select="true" : this is required for generic select boxes</li>
@@ -69,7 +69,7 @@
   
 </pre>
 
-<h2>Attributes for checkboxes and radios</h2>
+<h3>Attributes for checkboxes and radios</h3>
 <ul>
   <li>required : this is all that is required for checkboxes, radios need additional attributes</li>
   <li>data-group="name of radio group" : required on radios wrapping element</li>
@@ -89,7 +89,7 @@
   
 </pre>
 
-<h2>Attributes for Error messages</h2>
+<h3>Attributes for Error messages</h3>
 
   <ul>
     <li>data-empty="some error message for empty field" : *required when handling empty feilds</li>
@@ -114,7 +114,7 @@
   &lt;/div&gt;
 
 </pre>
-<h2>Default plugin settings</h2>
+<h3>Default plugin settings</h3>
 <pre>
   settings : {
     liveValidate: true,
