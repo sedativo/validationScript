@@ -1,4 +1,4 @@
-<h1>Validation Plugin Documenttation</h1>
+<h1>Validation Plugin Documentation</h1>
 
 <h3>Table of Contents</h3>
 <ul>
