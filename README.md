@@ -1,4 +1,13 @@
-<h2>Validation Script Plugin</h2>
+<h1>Validation Plugin Documenttation</h1>
+
+<h3>Table of Contents</h3>
+<ul>
+  <li><a href="#valid">Validation Plugin</a></li>
+  <li><a href="#avs">Avs Auto complete</a></li>
+  <li><a href="#support">Supported Browsers</a></li>
+</ul>
+
+<h2 id="#valid">Validation Script Plugin</h2>
 
 <p>This script for validating form values depends on data attributes in the mark up for defining matching patterns and error messages.</p>
 
@@ -162,7 +171,7 @@
   
 <hr/>
 
-<h2>Avs Auto complete plugin</h2>
+<h2 id="#avs">Avs Auto complete plugin</h2>
 
 <p>This plugin creates the state/province drop downs for Canada and United States if either is selected in Country drop down. For other countries an input type text replaces the drop downs. A wrapping element for the select/input with default data attributes is required. The plugin will look for two elements when initialised: a country element with the id of 'fake_country' and the wrapping element with an id of 'region'. </p>
 
@@ -210,6 +219,60 @@
       }
   ):
   
-</re>
+</pre>
 
+<hr/>
+
+<h2 id="#support" >Browser Support</h2>
+
+<p>This plugin uses the Object.create() method for instances of the plugin, if your target browsers don't support Object.create() you will need a polyfil for this method, which can be found here: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/create" >MDN: Object.create()</a>.</li>
+
+<small>*compat table from Mozilla Developer Network:</small>
+<h5>Desktop</h5>
+
+<table class="compat-table">
+  <tbody>
+   <tr>
+    <th>Feature</th>
+    <th>Chrome</th>
+    <th>Firefox (Gecko)</th>
+    <th>Internet Explorer</th>
+    <th>Opera</th>
+    <th>Safari</th>
+   </tr>
+   <tr>
+    <td>Basic support</td>
+    <td>5</td>
+    <td><a title="Released on 2011-03-22." href="/en-US/Firefox/Releases/4">4.0</a> (2)</td>
+    <td>9</td>
+    <td>11.60</td>
+    <td>5</td>
+   </tr>
+  </tbody>
+ </table>
+
+<h5>Mobile</h5>
+
+<table class="compat-table">
+  <tbody>
+   <tr>
+    <th>Feature</th>
+    <th>Android</th>
+    <th>Chrome for Android</th>
+    <th>Firefox Mobile (Gecko)</th>
+    <th>IE Mobile</th>
+    <th>Opera Mobile</th>
+    <th>Safari Mobile</th>
+   </tr>
+   <tr>
+    <td>Basic support</td>
+    <td><span title="Please update this with the earliest version of support." style="color: #888;">(Yes)</span></td>
+    <td><span title="Please update this with the earliest version of support." style="color: #888;">(Yes)</span></td>
+    <td><a title="Released on 2011-03-22." href="/en-US/Firefox/Releases/4">4.0</a> (2)</td>
+    <td><span title="Please update this with the earliest version of support." style="color: #888;">(Yes)</span></td>
+    <td>11.50</td>
+    <td><span title="Please update this with the earliest version of support." style="color: #888;">(Yes)</span></td>
+   </tr>
+  </tbody>
+ </table>
 
