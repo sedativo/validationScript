@@ -160,3 +160,57 @@
   
 </pre>
   
+<hr/>
+
+<h2>Avs Auto complete plugin</h2>
+
+<p>This plugin creates the state/province drop downs for Canada and United States if either is selected in Country Drop Down. For other countries an input type text replaces the drop downs. A wrapping element for the select/input with default data attributes is required. The plugin will look for two elements when initialised: a country element with the id of 'fake_country' and the wrapping element with an id of 'region'. </p>
+
+<h3>Default Attributes on Region wrapper</h3>
+
+<ul>
+  <li>data-value="use php or js mvc to get state value posted to server" : this attribute holds the value that was posted to the server</li>
+  <li>data-state="use php or js mvc to add state value from server" : this will autcomplete the state value</li>
+  <li>data-tabindex="[number]" : needed when building the select/input </li>
+  <li>data-placeholder="state" : value is used to add a placeholder to the input field</li>
+</ul>
+<pre>
+
+    &lt;div
+        id="region"
+        class="row"
+        data-value="<?php echo $_POST['state'] ?>"
+        data-state="<?=(isset($_GET['state']) ? $_GET['state'] : '')?>"
+        data-tabindex="7"
+        data-placeholder="<?=getWord('W01087')?>"
+    &gt;
+      
+      &lt;!--- plugin will build input/select here --&gt;
+
+    &lt;/div&gt;
+  
+</pre>
+
+<p>Calling the plugin</p>
+<pre>
+
+  $('form').avsAuto(); 
+  
+</pre>
+
+<p>Changing settings</p>
+<pre>
+
+  //if you want to change the default elements 
+  //for country drop down and region wrapper
+  
+  $('form').avsAuto(
+      { 
+        country: $('#country_dropdown'), 
+        region: $('#region_wrapper') 
+      }
+  ):
+
+</re>
+
+
