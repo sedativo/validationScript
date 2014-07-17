@@ -81,7 +81,7 @@
   &lt;input "type="checkbox id="someID" required &gt;
 
 
-  &lt;label&gt;Select date&lt;/label&gt;
+  &lt;label&gt;Radios&lt;/label&gt;
   &lt;radiogroup data-group="someName"&gt;
     &lt;type="radio" name="someName" value="1" required &gt;
     &lt;type="radio" name="someName" value="2" required &gt;
