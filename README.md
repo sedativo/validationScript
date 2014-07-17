@@ -164,7 +164,7 @@
 
 <h2>Avs Auto complete plugin</h2>
 
-<p>This plugin creates the state/province drop downs for Canada and United States if either is selected in Country Drop Down. For other countries an input type text replaces the drop downs. A wrapping element for the select/input with default data attributes is required. The plugin will look for two elements when initialised: a country element with the id of 'fake_country' and the wrapping element with an id of 'region'. </p>
+<p>This plugin creates the state/province drop downs for Canada and United States if either is selected in Country drop down. For other countries an input type text replaces the drop downs. A wrapping element for the select/input with default data attributes is required. The plugin will look for two elements when initialised: a country element with the id of 'fake_country' and the wrapping element with an id of 'region'. </p>
 
 <h3>Default Attributes on Region wrapper</h3>
 
