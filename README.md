@@ -217,7 +217,7 @@
         country: $('#country_dropdown'), 
         region: $('#region_wrapper') 
       }
-  ):
+  );
   
 </pre>
 
