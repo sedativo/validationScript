@@ -178,8 +178,8 @@
 <h3>Default Attributes on Region wrapper</h3>
 
 <ul>
-  <li>data-value="use php or js mvc to get state value posted to server" : this attribute holds the value that was posted to the server</li>
-  <li>data-state="use php or js mvc to add state value from server" : this will autcomplete the state value</li>
+  <li>data-value="get state value posted to server" : this attribute holds the value that was posted to the server</li>
+  <li>data-state="add state value from server" : this will autcomplete the state value</li>
   <li>data-tabindex="[number]" : needed when building the select/input </li>
   <li>data-placeholder="state" : value is used to add a placeholder to the input field</li>
 </ul>
