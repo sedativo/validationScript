@@ -6,6 +6,7 @@
         return {
             settings : {
                 liveValidate: true,
+                isAjax : null,
                 timeout : 1000,
                 patterns : {
                     phone : /^(?:(?:\(?(?:00|\+)([1-4]\d\d|[1-9]\d?)\)?)?[\-\.\ \\\/]?)?((?:\(?\d{1,}\)?[\-\.\ \\\/]?){0,})(?:[\-\.\ \\\/]?(?:#|ext\.?|extension|x)[\-\.\ \\\/]?(\d+))?$/i,
@@ -16,6 +17,7 @@
                     password : /^.{6,}$/,
                     state : /^.{0,80}$/,
                     postalcode : /^[A-Z0-9\-]{3,10}$/i,
+                    address : /^[a-zA-Z0-9\s,'-]*$/,
                     //date formatt MM/YYYY
                     date : /^(0[1-9]|1[012])[- \/.]\d{4}$/,
                     cc : {
@@ -25,32 +27,32 @@
                 }
             },
             activeForm : null,
-            isAjax : null,
             toggleSubmit : null,
             init : function(form, settings){
 
                 this.activeForm = form;
-                this.isAjax = settings ?
-                              settings.isAjax ?
-                              settings.isAjax : null : null;
-                this.settings.liveValidate = settings ?
-                                            settings.liveValidate ?
-                                            settings.liveValidate : this.settings.liveValidate :
-                                            this.settings.liveValidate;
+
+                if( settings ){
+                    for(var setting in settings){
+                        if( settings.hasOwnProperty(setting) ){
+                            if( typeof this.settings[setting] !== 'object' || setting !== 'patterns' ){
+                                this.settings[setting] = settings[setting];
+                            }
+                        }
+                    }
+                }
 
                 this.toggleSubmit = form.data('toggle-submit') || false;
 
                 if( !form.attr('data-handle-empty') ){
                     form.attr('data-handle-empty', 'false');
                 }
-
-
                 if( this.toggleSubmit ){
                     this.activeForm.find('input[type="submit"]')
                         .attr('disabled', 'disabled')
                         .addClass('is-disabled');
                 }
-                if(!form.find('[required]').hasClass('dirty') || !form.find('[required]').hasClass('pristine')){
+                if( !form.find('[required]').hasClass('dirty') || !form.find('[required]').hasClass('pristine') ){
                     form.find('[required]').addClass('pristine');
                 }
                 return this.bindEvents();
@@ -59,7 +61,7 @@
 
                 var self = this;
 
-                this.activeForm.find('input[type="submit"]')
+                this.activeForm.find('input[type="submit"], button[type="submit"], [type="submit"]')
                 .on('click', function(e){
                     e.preventDefault();
                     self.validate(self.activeForm.find('input[required], select[required]'), true);
@@ -103,6 +105,25 @@
             },
             createEvent : function(){
 
+                //polyfill for CostumEvent constructor from Mozilla Developer Network
+                //IE 9+ needs this.
+
+                if ( typeof CustomEvent !== 'function' ){
+                    (function () {
+                        function CustomEvent ( event, params ) {
+                            params = params || { bubbles: false, cancelable: false, detail: undefined };
+                            var evt = document.createEvent( 'CustomEvent' );
+                            evt.initCustomEvent( event, params.bubbles, params.cancelable, params.detail );
+                            return evt;
+                        }
+
+                        CustomEvent.prototype = window.Event.prototype;
+
+                        window.CustomEvent = CustomEvent;
+
+                    })();
+                }
+
                 var valReset = new CustomEvent(
                     'validateReset',
                     {
@@ -123,8 +144,28 @@
                         bubbles: true,
                         cancellable: true
                     }
+                ),
+                resetConf = new CustomEvent(
+                    'resetConfirmed',
+                    {
+                        detail:
+                        {
+                            time: new Date()
+                        },
+                        bubbles: true,
+                        cancelable: true
+                    }
+                ),
+                ajaxDone = new CustomEvent(
+                    'ajaxDone',
+                    {
+                        detail: {
+                            time: new Date()
+                        },
+                        bubbles: true,
+                        cancellable: true
+                    }
                 );
-
 
             },
             removeEvents : function(){
@@ -173,12 +214,10 @@
                 var el = elements,
                     self = this;
                 el.each(function(){
-
                     //handle all empty inputs
                     if( !$(this).val().length ||
                         ($(this).val().length === 0 &&
                         $(this)[0].selectedIndex === 0 ) ){
-
                         self.handleEmptyField($(this), submit);
 
                     }
@@ -279,6 +318,7 @@
                     self = this;
 
                 feilds.each(function(i, v){
+
                     if( $(this).attr('data-invalid') || $(this).hasClass('pristine') ){
                         canSubmit = false;
                     }
@@ -290,8 +330,9 @@
                 }
 
                 if( canSubmit && this.isAjax && submit ){
+
                     this.activeForm.removeClass('invalid-empty');
-                    return this.activeForm.find('input[type="submit"]').trigger('callAjax');
+                    return this.activeForm.trigger('callAjax');
                 }
 
                 if( canSubmit && submit && !this.isAjax ){
@@ -324,7 +365,7 @@
             },
             toggleDisabled : function(canSubmit){
 
-                var submitButton = this.activeForm.find('input[type="submit"]');
+                var submitButton = this.activeForm.find('input[type="submit"], button[type="submit"]');
 
                 return  canSubmit ?
                         submitButton.removeClass('is-disabled').removeAttr('disabled') :
@@ -363,7 +404,7 @@
             handleRadio : function(element){
 
                 var name = element.attr('name'),
-                    group = this.activeForm.find('radiogroup[data-group="'+name+'"]').children('input[type="radio"]'),
+                    group = this.activeForm.find('radiogroup[data-group="'+name+'"]').find('input[type="radio"]'),
                     valid = false,
                     self = this;
 
@@ -389,19 +430,24 @@
                 var el = element,
                     patterns = this.settings.patterns;
 
+                if(isNaN(el.val())){
+                    return this.setMessage(element, 'invalid', false);
+                }
+
                 if ( patterns.cc.visa.test(el.val()) && !this.luhnCheck(el.val()) ){
                     return this.setMessage(element, 'invalid-visa', false);
                 }
+
                 if ( patterns.cc.mastercard.test(el.val()) && !this.luhnCheck(el.val()) ){
                     return this.setMessage(element, 'invalid-mc', false);
                 }
+
                 if ( ( !patterns.cc.mastercard.test(el.val()) || !patterns.cc.visa.test(el.val()) ) &&
                     !this.luhnCheck(el.val()) ){
-
                     return this.setMessage(element, 'invalid', false);
                 }
-                return this.setMessage(element, '', true);
 
+                return this.setMessage(element, '', true);
             },
             luhnCheck : function(value){
 
