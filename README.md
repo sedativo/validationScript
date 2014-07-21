@@ -127,6 +127,7 @@
 <pre>
   settings : {
     liveValidate: true,
+    isAjax : null,
     timeout : 1000,
     patterns : {
       name : /^[a-z ,.'-]+$/i,
@@ -135,6 +136,7 @@
       password : /^.{6,}$/,
       state : /^.{0,80}$/,
       postalcode : /^[A-Z0-9\-]{3,10}$/i,
+      address : /^[a-zA-Z0-9\s,'-]*$/,
       //date formatt MM/YYYY
       date : /^(0[1-9]|1[012])[- \/.]\d{4}$/,
       cc : {
@@ -142,8 +144,7 @@
         mastercard : /^5[0-9]{15}$/,
       }
     }
-  },
-  isAjax : null
+  }
 </pre>
 
 <p>Calling the plugin</p>
