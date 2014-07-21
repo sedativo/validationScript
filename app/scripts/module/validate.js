@@ -430,7 +430,7 @@
                 var el = element,
                     patterns = this.settings.patterns;
 
-                if(isNaN(el.val())){
+                if( isNaN(el.val()) ){
                     return this.setMessage(element, 'invalid', false);
                 }
 
