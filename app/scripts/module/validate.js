@@ -4,7 +4,7 @@
     var Validate = (function(){
 
         return {
-            settings : {
+            defaults : {
                 liveValidate: true,
                 isAjax : null,
                 timeout : 1000,
@@ -26,21 +26,11 @@
                     }
                 }
             },
-            activeForm : null,
-            toggleSubmit : null,
-            init : function(form, settings){
+            init : function(form, options){
 
                 this.activeForm = form;
 
-                if( settings ){
-                    for(var setting in settings){
-                        if( settings.hasOwnProperty(setting) ){
-                            if( typeof this.settings[setting] !== 'object' || setting !== 'patterns' ){
-                                this.settings[setting] = settings[setting];
-                            }
-                        }
-                    }
-                }
+                this.settings = $.extend({}, this.defaults, options);
 
                 this.toggleSubmit = form.data('toggle-submit') || false;
 
