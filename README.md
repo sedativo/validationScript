@@ -125,26 +125,27 @@
 </pre>
 <h3>Default plugin settings</h3>
 <pre>
-  settings : {
-    liveValidate: true,
-    isAjax : null,
-    timeout : 1000,
-    patterns : {
-      name : /^[a-z ,.'-]+$/i,
-      email : /^([\w-\.]+@([\w-]+\.)+[\w-]{2,4})?$/,
-      cvv : /^[0-9]{3,4}$/,
-      password : /^.{6,}$/,
-      state : /^.{0,80}$/,
-      postalcode : /^[A-Z0-9\-]{3,10}$/i,
-      address : /^[a-zA-Z0-9\s,'-]*$/,
-      //date formatt MM/YYYY
-      date : /^(0[1-9]|1[012])[- \/.]\d{4}$/,
-      cc : {
-        visa : /^4[0-9]{12,15}$/,
-        mastercard : /^5[0-9]{15}$/,
-      }
-    }
-  }
+   defaults : {
+                liveValidate: true,
+                isAjax : false,
+                timeout : 1000,
+                patterns : {
+                    phone : /^(?:(?:\(?(?:00|\+)([1-4]\d\d|[1-9]\d?)\)?)?[\-\.\ \\\/]?)?((?:\(?\d{1,}\)?[\-\.\ \\\/]?){0,})(?:[\-\.\ \\\/]?(?:#|ext\.?|extension|x)[\-\.\ \\\/]?(\d+))?$/i,
+                    alphaNumeric : /^[a-zA-Z0-9]+$/,
+                    name : /^[a-z ,.'-]+$/i,
+                    email : /^([\w-\.]+@([\w-]+\.)+[\w-]{2,4})?$/,
+                    cvv : /^[0-9]{3,4}$/,
+                    password : /^.{6,}$/,
+                    state : /^.{0,80}$/,
+                    postalcode : /^[A-Z0-9\-]{3,10}$/i,
+                    address : /^[a-zA-Z0-9\s,'-]*$/,
+                    //date formatt MM/YYYY
+                    date : /^(0[1-9]|1[012])[- \/.]\d{4}$/,
+                    cc : {
+                        visa : /^4[0-9]{12,15}$/,
+                        mastercard : /^5[0-9]{15}$/,
+                    }
+                }
 </pre>
 
 <p>Calling the plugin</p>
