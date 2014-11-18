@@ -129,13 +129,18 @@ body {
     display: none;
 }
 small.error {
-        display: none;
-        color: #fff;
-        background: $invalidBorder;
-        padding: 0.3em 1em;
-        font-style: italic;
-        margin-top: -1rem;
-        clear: both;
+    display: none;
+    color: #fff;
+    background: $invalidBorder;
+    padding: 0.3em 1em;
+    font-style: italic;
+    margin-top: -1rem;
+    clear: both;
+    [data-stack-msgs="true"] &{
+        &.show {
+            display: block;
+        }
+    }
 }
 form.invalid-empty[data-handle-empty="false"] {
     .empty-message {

@@ -1,7 +1,7 @@
 'use strict';
 window.addEventListener('load', function(){
     var timeout;
-    $('form').validate( {isAjax: true});
+    //$('form').validate( {isAjax: true});
 
     $('form').find('input[type=submit]')
     .on('click', function(e){
@@ -15,9 +15,9 @@ window.addEventListener('load', function(){
     });
 
 
-    $('#myform').formatVal().avsAuto();
+    $('#myform').formatVal().avsAuto().validate();
     $('#anotherForm').formatVal();
-
+    $('#newForm').validate();
 }, false);
 
 

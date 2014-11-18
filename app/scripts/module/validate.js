@@ -33,6 +33,7 @@
                 this.settings = $.extend({}, this.defaults, options);
 
                 this.toggleSubmit = form.data('toggle-submit') || false;
+                this.stackMsgs = form.data('stack-msgs') || false;
 
                 if( !form.attr('data-handle-empty') ){
                     form.attr('data-handle-empty', 'false');
@@ -185,6 +186,12 @@
                             .addClass('pristine')
                             .removeClass('dirty');
 
+                    } else if ( $(this).is('checkbox') || $(this).is('radio') ){
+                         $(this).prop('checked', false)
+                            .removeAttr('data-invalid')
+                            .removeAttr('data-valid')
+                            .addClass('pristine')
+                            .removeClass('dirty');
                     } else {
                         $(this).val('')
                             .removeClass('dirty')
@@ -195,6 +202,7 @@
 
                 });
 
+                this.activeForm.find('.error').removeClass('show');
                 this.activeForm.removeClass('invalid-empty');
 
                 return this.activeForm.data('toggle-submit') && this.toggleDisabled();
@@ -339,13 +347,23 @@
             },
             setMessage : function(element, type, valid){
 
-                var messageEL = element.siblings('.error'),
+                var id = typeof element.data('message-trigger') !== undefined ? element.data('message-trigger') : false,
+                    messageEL = id ? $('.error[data-error-id="'+id+'"]') : element.siblings('.error'),
                     text = messageEL.data(type) ? messageEL.data(type) : '';
 
                 messageEL.text(text);
 
+                if( this.stackMsgs ){
+                    this.showMessage(messageEL, valid);
+                }
+
                 return this.setvalidity(element, valid);
 
+            },
+            showMessage : function(messageEL,valid){
+                return valid ?
+                    messageEL.removeClass('show') :
+                    messageEL.addClass('show');
             },
             setvalidity : function(element, valid){
                 return valid ?

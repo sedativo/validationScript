@@ -23,7 +23,7 @@
     </head>
     <body>
         <section id="wrap">
-            <form id="myform" novalidate="novalidate" data-toggle-submit="false" >
+            <form id="myform" novalidate="novalidate" data-toggle-submit="false" data-handle-empty="true">
                 <p class="alert-box alert empty-message">Please fill out the entire form</p>
                 <h2>Form validation plugin</h2>
                 <!-- <p class="message handleEmpty alert-box success columns large-5"
@@ -241,7 +241,7 @@
                         <div class="columns large-5">
                         <label>Checkbox</label>
                             <input type="checkbox" name="checked" class="pristine" required />
-                             <small class="error" data-empty="Please check this box."></small>
+                            <small class="error" data-empty="Please check this box."></small>
                         </div>
                         <div class="columns large-5">
                             <label>Radio</label>
@@ -263,7 +263,53 @@
                         </div>
                     </div>
                 </fieldset>
-                <input type="submit" value="submit" class="button" />
+                <button type="submit" class="button"> Submit </button>
+            </form>
+        </section>
+        <section>
+            <form id="newForm" data-handle-empty="false" data-toggle-submit="false" data-stack-msgs="true" novalidate>
+                <fieldset>
+                    <div class="row">
+                        <label>E-mail</label>
+                        <input
+                            type="email"
+                            id="email"
+                            name="email"
+                            class="pristine"
+                            data-pattern="email"
+                            data-message-trigger="email"
+                            required />
+
+                    </div>
+                </fieldset>
+                <fieldset>
+                    <div class="row">
+                        <label>Password</label>
+                        <input
+                            type="password"
+                            name="password"
+                            id="password"
+                            class="pristine"
+                            data-pattern="password"
+                            data-message-trigger="password"
+                            required
+                        />
+
+                    </div>
+                </fieldset>
+                <small
+                    class="error"
+                    data-empty="Please enter a password."
+                    data-invalid="Password must be at least 6 digits"
+                    data-error-id="password"
+                ></small>
+                <small
+                    class="error"
+                    data-empty="Please enter your email address."
+                    data-invalid="Please enter a valid email address."
+                    data-error-id="email"
+                ></small>
+                <button type="submit" class="button">Submit</button>
             </form>
         </section>
 
